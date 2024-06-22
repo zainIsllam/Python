@@ -2233,6 +2233,19 @@ class TestBotWithoutRequest:
         monkeypatch.setattr(bot.request, "post", make_assertion)
         assert await bot.refund_star_payment(42, "37")
 
+    async def test_send_chat_action_all_args(self, bot, chat_id, monkeypatch):
+        async def make_assertion(*args, **_):
+            kwargs = args[1]
+            return (
+                kwargs["chat_id"] == chat_id
+                and kwargs["action"] == "action"
+                and kwargs["message_thread_id"] == 1
+                and kwargs["business_connection_id"] == 3
+            )
+
+        monkeypatch.setattr(bot, "_post", make_assertion)
+        assert await bot.send_chat_action(chat_id, "action", 1, 3)
+
 
 class TestBotWithRequest:
     """
